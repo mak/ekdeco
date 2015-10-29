@@ -1,2 +1,2 @@
 # ekdeco
-Script for dealing with varius ek's 
+Scripts for dealing with various ek's 
