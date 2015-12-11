@@ -29,6 +29,7 @@ def get_keys(h):
     for scr in h.xpath('//script/text()'):
         old_l = len(r)
         for st in re.findall("\s*('|\")([a-z0-9/+=]+)(\"|')\s*(;|\))",scr,re.I):
+            
             if len(st[1]) < 6: continue
             try:
                 #print st
@@ -41,9 +42,9 @@ def get_keys(h):
             ## there are three posibilites as seens so far,
             ### 1. separet variables
             ### 2. array initialized index by index
-            ### 3. array initialized at onec
+            ### 3. array initialized at once
             
-            for enc in re.findall("([a-z0-9]+(\[[0-9]+\])?\s*=\s*('|\")[-_. %a-z0-9/+=:]+(\"|')\s*)(,|;)",scr,re.I):
+            for enc in re.findall("([_a-z0-9]+(\[[0-9]+\])?\s*=\s*('|\")[-_. %a-z0-9/+=:]+(\"|')\s*)(,|;)",scr,re.I):
                 ## this covers 1 and 2
                 var,val = enc[0].split('=',1)
                 var = var.strip()
@@ -51,7 +52,7 @@ def get_keys(h):
                 #print `var`,`val`
                 print '[+] found posible configuration var', var
                 ENC_DATA[var]=val
-            for enc in re.findall("var\s+([a-z0-9]+)\s+=\s+\[((\s*('|\")[-_. %a-z0-9/+=:]+(\"|'),?)+)\s*\];",scr,re.I):
+            for enc in re.findall("var\s+([_a-z0-9]+)\s+=\s+\[((\s*('|\")[-_. %a-z0-9/+=:]+(\"|'),?)+)\s*\];",scr,re.I):
                 ### this takes care of 3rd case
                 var = enc[0]
                 val = enc[1]
@@ -105,7 +106,8 @@ def method_0(text,key):
 def method_1(text,key):
     txt = re.sub(r'\s+','%',text)
     txt = unquote(txt)
-    txt = xtea_decrypt(txt,key[:16])    
+    txt = xtea_decrypt(txt,key[:16])
+#@    print `txt`
     return txt
 
 def method_2(text,key):
@@ -130,6 +132,16 @@ def decode_page(t,k):
         try:
             x=f(t,k)
             #print len(t),len(x)
+            ## there are some constant names in
+            ## angler payload lets look for them
+            if 'cryptKey' in x:
+                return x
+            elif 'getKolaio' in x:
+                return x
+            elif 'xTrue' in x and 'xFalse' in x:
+                return x
+            
+            ## some basic heuristic....
             if tlen - len(x) < epsi:
                 return x
         except:
@@ -155,8 +167,8 @@ if __name__ == '__main__':
                 continue
 
             if 'cryptKey' in txt:
-                #print txt
-                key_var = re.findall('var cryptKey = ([a-z0-9]+(\[\s*[0-9]+\s*\])?),',txt,re.I)[0][0]
+
+                key_var = re.findall('var cryptKey = ([_a-z0-9]+(\[\s*[0-9]+\s*\])?),',txt,re.I)[0][0]
                 key_var = re.sub('\s+','',key_var)
                 print '[+] found key_var',key_var
                 #txt = method_3(stream,key)
