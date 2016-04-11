@@ -98,7 +98,7 @@ def shuffle(data,key):
 
 
 def method_0(text,key):
-    txt = re.sub(r'\s+','',text)
+    txt = re.sub(r'\s+|\.','',text)
     txt = txt.decode('base64')
     txt = xor(txt,key.decode('base64'))
     return txt
@@ -201,7 +201,9 @@ if __name__ == '__main__':
     #ENC_DATA[key_var] = ENC_DATA[key_var].decode('base64')
     for k in ENC_DATA:
         if k == key_var: continue
-        if not key_var.startswith(k[:2]): continue
+        if not key_var.startswith(k[:2]) and \
+           not key_var[1:].startswith(k[1:3]):
+          continue
 
         v = ENC_DATA[k]
         data=shuffle(v,ENC_DATA[key_var])
