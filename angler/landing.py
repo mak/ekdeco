@@ -122,7 +122,7 @@ def method_3(text,key):
     return xor(text,key)
 
 def method_4(text,key):
-    text = re.sub(r"(:+|=|\]\[)",'%',text.replace("\n",''))
+    text = re.sub(r"(:+|=|\]\[)",'%',text.replace("\r\n",''))
     text = re.sub('%[A-F0-9]{2}',lambda g: g.group(0)[1:].decode('hex'),text)
     text = xtea_decrypt(text,key[:16])
     return text
@@ -169,7 +169,7 @@ if __name__ == '__main__':
         for el in  h.xpath('//*[@id or @ui or @di]'):
             if el.text:
                 txt = decode_page(el.text,key)
-                
+#            print txt  
             if not txt:
                 continue
 
