@@ -9,7 +9,7 @@ from swf.movie import SWF
 from Crypto.Cipher import ARC4
 
 rc4_decrypt = lambda d,k : ARC4.new(k).decrypt(d)
-apr = argparse.ArgumentParser(description='Nuclear swf decoder')
+apr = argparse.ArgumentParser(description='Neutrino swf decoder')
 apr.add_argument('file',type=str, nargs='?', help='File path')
 apr.add_argument('-d','--dir',help='Output dir',default='/tmp')
 apr.add_argument('-e','--exploits',help='save exploits',default=False,action='store_true')
