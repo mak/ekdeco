@@ -74,7 +74,7 @@ class Neutrino(SWF):
                 return self.tag_by_name(t).data
             except:
                 return ''
-                
+        with open('/tmp/neu.swf','w') as f: f.write(s.script.bytes)
         if 'as$7:anonymous' in s.script.bytes:
             resources = []
             
@@ -84,18 +84,18 @@ class Neutrino(SWF):
         else:
             strs = re.findall('[a-zA-Z0-9]{5,}',s.script.bytes)
             beg = strs.index('writeBytes')
+            old = True
             try:
                 end = strs.index('getDefinitionByName')
+                old= False
             except:
                 end = strs.index('Loader')
             resources = [strs[beg-1]] + strs[beg+1:end]
-            if len(resources) < 5:
+            if old and len(resources) < 5:
                 ## this is older version with one letter-names...
                 idx = s.script.bytes.index('writeBytes')
                 h= re.findall('([a-z])\nwriteBytes((\x01[a-z])+)\x06Loader',self.script.bytes,re.M)[0]
                 resources = [h[0]] + h[1].split("\x01")[1:]
-
-                
         
         swf_bytes = ''.join([ get_data(r) for r in resources])
 
