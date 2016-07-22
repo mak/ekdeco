@@ -91,7 +91,7 @@ class Neutrino(SWF):
             except:
                 end = strs.index('Loader')
             resources = [strs[beg-1]] + strs[beg+1:end]
-            if olen(resources) < 5:
+            if old and len(resources) < 5:
                 ## this is older version with one letter-names...
                 idx = s.script.bytes.index('writeBytes')
                 h= re.findall('([a-z])\nwriteBytes((\x01[a-z])+)\x06Loader',self.script.bytes,re.M)[0]
