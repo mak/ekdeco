@@ -62,7 +62,11 @@ class Neutrino(SWF):
             try:
                 d  = rc4_decrypt(self.binary_data[data_id].data,k)
                 d  = zlib.decompress(d,-15)
-                self.ek_key = k
+                if d.startswith('<html>'):
+                    self.ek_key = k
+                else:
+                    ### hmm this is strange but ok...
+                    self.cfg_key = k
             except Exception as e:
                 self.cfg_key = k
                 
