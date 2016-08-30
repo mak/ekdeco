@@ -75,17 +75,25 @@ class Neutrino(SWF):
         the_cfg = cfg if cfg else self.get_cfg()
         data_id = [ s.tagId for s in self.symbols if 'html_rc4' in s.name ][0]
         for k in self.strings:
-            try:
-                d  = rc4_decrypt(self.binary_data[data_id].data,k)
-                d  = zlib.decompress(d,-15)
-                if d.startswith('<html>'):
-                    self.ek_key = k
-            except Exception as e:
-                pass
+            if not hasattr(self, 'ek_key'):
+                try:
+                    d  = rc4_decrypt(self.binary_data[data_id].data,k)
+                    d  = zlib.decompress(d,-15)
+                    if '<htm' in d:
+                        self.ek_key = k
+                except Exception as e:
+                    pass
 
-            x  = rc4_decrypt(the_cfg,k)
-            if x.startswith('{"'):
-                self.cfg_key = k
+            elif not hasattr(self, 'cfg_key'):
+                x  = rc4_decrypt(the_cfg,k)
+                if x.startswith('{"'):
+                    self.cfg_key = k
+
+            else:
+                # done here
+                break
+
+        return True if (hasattr(self, 'ek_key') and hasattr(self, 'cfg_key')) else False
 
     def get_second_swf(self):
 
@@ -168,7 +176,10 @@ if __name__ == '__main__':
     else:
         s2 = s
 
-    s2.get_keys(cfg_r)
+    if not s2.get_keys(cfg_r):
+        print >> sys.stderr,'[-] failed to get keys'
+        exit(-1)
+
     if not cfg_r:
         cfg_r = s2.get_cfg()    # get config from 2nd layer swf
     print >> sys.stderr,'[+] cfg key: %s, exploit key: %s' % (s2.cfg_key,s2.ek_key)
