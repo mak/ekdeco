@@ -103,6 +103,7 @@ class Neutrino(SWF):
                 return self.tag_by_name(t).data
             except:
                 return ''
+        print self.symbols
         #with open('/tmp/neu.swf','w') as f: f.write(s.script.bytes)
         if 'as$7:anonymous' in s.script.bytes:
             resources = []
@@ -111,6 +112,7 @@ class Neutrino(SWF):
                 x=re.findall('[a-zA-Z0-9]{5,}',s.script.bytes[g.start()-40:g.start()])
                 resources.append(x[0] if 'ByteArray' in x else x[-1])
         elif len(self.symbols) >= 3:
+            print 'aaaa'
             strs = re.findall('[a-zA-Z0-9]{5,}',s.script.bytes)
             beg = strs.index('writeBytes')
             old = True
@@ -132,9 +134,12 @@ class Neutrino(SWF):
                 d = rc4_decrypt(swf_bytes,k)
                 if d[:3] in ['ZWS','CWS','FWS']:
                     return d
-        elif len(self.symbols) == 2 and self.symbols[0].name == 'EmbedFile':
+        elif len(self.symbols) == 2 and ('setPixel32' in self.strings or self.symbols[0].name == 'EmbedFile'):
             # new version(2b19b310887bb1beac421843671e5541f2e369b2815fcc3dc4dfdfc71e059a0d) only has two symbols:
             # [<SWFSymbol {'tagId': 1, 'name': 'EmbedFile'}>, <SWFSymbol {'tagId': 0, 'name': 'Main'}>]
+            ### beter use funcion name which is using to set some bitmap, that is used to store payload
+            ## see 7cb253e6997cf06e33eb8d0c74da9e10
+            
             for k in self.strings:
                 try:
                     d = rc4_decrypt(self.binary_data[1].data, k)
