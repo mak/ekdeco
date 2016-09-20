@@ -103,7 +103,6 @@ class Neutrino(SWF):
                 return self.tag_by_name(t).data
             except:
                 return ''
-        print self.symbols
         #with open('/tmp/neu.swf','w') as f: f.write(s.script.bytes)
         if 'as$7:anonymous' in s.script.bytes:
             resources = []
@@ -112,7 +111,6 @@ class Neutrino(SWF):
                 x=re.findall('[a-zA-Z0-9]{5,}',s.script.bytes[g.start()-40:g.start()])
                 resources.append(x[0] if 'ByteArray' in x else x[-1])
         elif len(self.symbols) >= 3:
-            print 'aaaa'
             strs = re.findall('[a-zA-Z0-9]{5,}',s.script.bytes)
             beg = strs.index('writeBytes')
             old = True
