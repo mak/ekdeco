@@ -84,16 +84,15 @@ class Neutrino(SWF):
                 except Exception as e:
                     pass
 
-            elif not hasattr(self, 'cfg_key'):
+            if not hasattr(self, 'cfg_key'):
                 x  = rc4_decrypt(the_cfg,k)
                 if x.startswith('{"'):
                     self.cfg_key = k
 
-            else:
-                # done here
+            if hasattr(self,'cfg_key') and hasattr(self,'ek_key'):
                 break
-
-        return True if (hasattr(self, 'ek_key') and hasattr(self, 'cfg_key')) else False
+            
+        return hasattr(self, 'ek_key') and hasattr(self, 'cfg_key')
 
     def get_second_swf(self):
 
