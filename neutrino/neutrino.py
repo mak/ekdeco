@@ -102,7 +102,8 @@ class Neutrino(SWF):
                 return self.tag_by_name(t).data
             except:
                 return ''
-        #with open('/tmp/neu.swf','w') as f: f.write(s.script.bytes)
+#        with open('/tmp/neu.swf','w') as f: f.write(s.script.bytes)
+
         if 'as$7:anonymous' in s.script.bytes:
             resources = []
 
@@ -131,7 +132,7 @@ class Neutrino(SWF):
                 d = rc4_decrypt(swf_bytes,k)
                 if d[:3] in ['ZWS','CWS','FWS']:
                     return d
-        elif len(self.symbols) == 2 and ('setPixel32' in self.strings or self.symbols[0].name == 'EmbedFile'):
+        elif len(self.symbols) == 2 and ('Loader' in self.strings or self.symbols[0].name == 'EmbedFile'):
             # new version(2b19b310887bb1beac421843671e5541f2e369b2815fcc3dc4dfdfc71e059a0d) only has two symbols:
             # [<SWFSymbol {'tagId': 1, 'name': 'EmbedFile'}>, <SWFSymbol {'tagId': 0, 'name': 'Main'}>]
             ### beter use funcion name which is using to set some bitmap, that is used to store payload
@@ -143,7 +144,7 @@ class Neutrino(SWF):
                     if d[:3] in ['ZWS','CWS','FWS']:
                         return d
                 except Exception, e:
-                    pass
+                    pass        
         else:
             return None
 
